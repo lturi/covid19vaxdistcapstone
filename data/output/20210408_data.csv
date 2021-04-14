@@ -1,0 +1,13 @@
+"# Transmissible Cases!25!0xcc3333ff!log10(x)","","","","","","x","","","","","","","","","","","","","","","","","","","","","","","","","","","",""
+"# Disease Spread!5!0xe05251ff!linear(x)","","","","","","","","","","","","","","","","","","","","","","","","","","x","","","","","","","",""
+"# Population Mobility!10!0x57b757ff!log10(x)","","","","","","","","x","","","","","","","","","","","","","","","","","","","","","","","","","","x"
+"# Residential Density!10!0x70c970ff!linear(x)","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","x","","",""
+"# Social Distancing!10!0x4258c9ff!linear(x)","","","","","","","","","","","x","","","","","","","","","","","","","","","","","","","","","","",""
+"# Testing!10!0x5f73ddff!-log10(x)","","","","","","","","","","","","","","","","","","","","","","","","","","","","","x","","","","",""
+"# Population Demographics!10!0x6b0b9eff!log10(x)","","","","","","","","","","","","","","","x","","","","","x","x","","","","","","","","","","","","",""
+"# Air Pollution!10!0x7e24aeff!linear(x)","","","","x","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""
+"# Age Distribution!10!0x933fbfff!log10(x)","","","","","","","","","","","","","","","","","","","x","","","","","","","","","","","","","","",""
+"# Comorbidities!10!0xa95ad2ff!zscore(x)","","","","","","","","","","x","","","x","","","","","","","","","","x","","x","","","","","","","","",""
+"# Health Disparities!10!0xc177e7ff!uniform(x)","","","","","","","","","","","","","","","","","","","","","","x","","","","","","","","","","","x",""
+"# Hospital Beds!5!0xdb95feff!-log10(x)","","","","","","","","","","","","","","x","","","","","","","","","","","","","","","","","","","",""
+row,sid,casrn,name,AirPollution,Cases,CountyCaseRate,CountyDeathRate,DaytimePopDensity,Deaths,Diabetes,DistancingGrade,Mobility,Obesity,PctBeds,PctBlack,PctCases,PctDeaths,PctDeaths2,PctGE65,PctHisp,PctNative,PctNoIns,PrematureDeath,Sick,Smoking,Spread,StateCaseRate,StateDeathRate,StatePctTested,StateTestRate,SVIHousing,SVIMinority,SVISocioeconomic,Traffic

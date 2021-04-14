@@ -1,5 +1,6 @@
-./pvi/
-./toxpi/
-./working/
-./web/
+pvi/
+toxpi/
+working/
+web/
+data/cc-est*
 README.html
