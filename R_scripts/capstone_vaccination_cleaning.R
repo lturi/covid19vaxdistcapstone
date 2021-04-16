@@ -28,6 +28,7 @@ library(dplyr)
 
 ## make dir to place source files since they cannot be retrieved again
 today<-format(Sys.time(),"%C%y%m%d")
+working_date <- "20210415"
 #system(sprintf("mkdir %s", today))
 
 ## get denominators for race/ethnicity/age over 65 to match PVI indicators
@@ -39,15 +40,20 @@ today<-format(Sys.time(),"%C%y%m%d")
 ## vaccination data on in PA
 
 df.census<-data.frame(read_csv("cc-est2019-alldata-42.csv"))
-keeps <- c("CTYNAME","YEAR","AGEGRP","TOT_POP","BAC_MALE","BAC_FEMALE","IAC_MALE","IAC_FEMALE","H_MALE","H_FEMALE")
+keeps <- c("CTYNAME","YEAR","AGEGRP","TOT_POP","NHWA_MALE","NHWA_FEMALE","NHAAC_MALE","NHAAC_FEMALE",
+           "NHNAC_MALE","NHNAC_FEMALE","NHBAC_MALE","NHBAC_FEMALE","NHIAC_MALE","NHIAC_FEMALE","H_MALE","H_FEMALE")
 df.census<-df.census[ keeps]
 df.census<-df.census[df.census$YEAR==11,]
 df.census$CTYNAME <- trim(str_to_upper(df.census$CTYNAME,locale="en"))
 df.census$CTYNAME<-sub('[" "][^.]+$', '', df.census$CTYNAME)
-df.census$BAC_TOTAL <- df.census$BAC_FEMALE+df.census$BAC_MALE
-df.census$IAC_TOTAL <- df.census$IAC_FEMALE+df.census$IAC_MALE
+df.census$BAC_TOTAL <- df.census$NHBAC_FEMALE+df.census$NHBAC_MALE
+df.census$IAC_TOTAL <- df.census$NHIAC_FEMALE+df.census$NHIAC_MALE
 df.census$H_TOTAL <- df.census$H_FEMALE+df.census$H_MALE
-df.census<-subset(df.census,select=-c(YEAR,BAC_MALE,BAC_FEMALE,IAC_MALE,IAC_FEMALE,H_MALE,H_FEMALE))
+df.census$NHWA_TOTAL <- df.census$NHWA_MALE + df.census$NHWA_FEMALE
+df.census$NHAAC_TOTAL <- df.census$NHAAC_MALE + df.census$NHAAC_FEMALE
+df.census$NHNAC_TOTAL <- df.census$NHNAC_MALE + df.census$NHNAC_FEMALE
+df.census<-subset(df.census,select=-c(YEAR,NHBAC_MALE,NHBAC_FEMALE,NHIAC_MALE,NHIAC_FEMALE,H_MALE,H_FEMALE,
+                                      NHWA_FEMALE,NHWA_MALE,NHAAC_FEMALE,NHAAC_MALE,NHNAC_MALE,NHNAC_FEMALE))
 
 df.u65 <- df.census[df.census$AGEGRP>=4 & df.census$AGEGRP<=13,]
 df.u65.agg <- aggregate(. ~ CTYNAME, data=df.u65, sum)
@@ -65,17 +71,17 @@ df.denom <- inner_join(df.race_ethnicity,df.age.agg, by = c("CTYNAME" = "county"
 df.denom <- inner_join(df.denom,df.u65.agg, by = c("CTYNAME" = "county"))
 
 
-colnames(df.denom)<- c("county","TOT_POP","TOT_BAC","TOT_IAC","TOT_H","TOT_O65","TOT_U65")
+colnames(df.denom)<- c("county","TOT_POP","TOT_BAC","TOT_IAC","TOT_NHWA",
+                       "TOT_NHAAC","TOT_NHNAC","TOT_H","TOT_O65","TOT_U65")
 
 
 
 ## get total counts vaccine data
-df.all<-data.frame(read_csv("COVID-19_Vaccinations_by_Residence_Current_County_Health.csv"))
-df.all$county <- str_to_upper(df.all$County.Name)
+df.all<-data.frame(read_csv(sprintf("%s/COVID-19_Vaccinations_by_Residence_Current_County_Health.csv",working_date)))
+df.all$county <- str_to_upper(df.all$county)
 df.all <- df.all[order(df.all$county),]
 df.all<-join(df.all,df.denom,
                type = "inner", by=c("county"),match="all")
-
 #df.all$chg_pop_since_2018 = df.all$County.Population - df.all$TOT_POP
 #df.all$pct_chg = signif(df.all$chg_pop_since_2018/df.all$TOT_POP,digits=4)
 
@@ -86,9 +92,9 @@ df.all<-join(df.all,df.denom,
 ## step would be to pull denominator data for each corresponding age group, and
 ## look at those metrics.
 
-df.age <- data.frame(read_csv("COVID-19_Vaccinations_by_Age_Group_Current_County_Health.csv"))
+df.age <- data.frame(read_csv(sprintf("%s/COVID-19_Vaccinations_by_Age_Group_Current_County_Health.csv",working_date)))
 df.age[is.na(df.age)] <- 0
-df.age <- data.frame( df.age$County.Name, U65Partial = apply(df.age[2:11], 1, sum) ,
+df.age <- data.frame( df.age$county, U65Partial = apply(df.age[2:11], 1, sum) ,
                       O65Partial = apply(df.age[12:20], 1, sum),
                       U65Full = apply(df.age[21:30],1,sum),
                       O65Full = apply(df.age[31:39],1,sum))
@@ -103,12 +109,12 @@ df.all$Rate.U65Full.Per.100K <-df.all$U65Full/df.all$TOT_U65 *100000
 
 ## add in vaccination rates for ethnicity (hispanic)
 
-df.eth <- data.frame(read_csv("COVID-19_Vaccinations_by_Ethnicity_Current_County_Health.csv"))
+df.eth <- data.frame(read_csv(sprintf("%s/COVID-19_Vaccinations_by_Ethnicity_Current_County_Health.csv",working_date)))
 df.eth[is.na(df.eth)] <- 0
-df.eth <- subset(df.eth,select=c(County.Name,Partially.Covered.Hispanic,Fully.Covered.Hispanic))
-df.all <-inner_join(df.all, df.eth, by = c("county" = "County.Name"))
-df.all$Rate.HispanicPartial.Per.100K <-df.all$Partially.Covered.Hispanic/df.all$TOT_H *100000
-df.all$Rate.HispanicFull.Per.100K <-df.all$Fully.Covered.Hispanic/df.all$TOT_H *100000
+df.eth <- subset(df.eth,select=c(zip_county_desc,partially_covered_hispanic,fully_covered_hispanic))
+df.all <-inner_join(df.all, df.eth, by = c("county" = "zip_county_desc"))
+df.all$Rate.HispanicPartial.Per.100K <-df.all$partially_covered_hispanic/df.all$TOT_H *100000
+df.all$Rate.HispanicFull.Per.100K <-df.all$fully_covered_hispanic/df.all$TOT_H *100000
 
 ## add in vaccination rates for race (black, native american)
 #`County Name` = col_character(),
@@ -127,38 +133,60 @@ df.all$Rate.HispanicFull.Per.100K <-df.all$Fully.Covered.Hispanic/df.all$TOT_H *
 #`Fully Covered White` = col_double(),
 #`Fully Covered Unknown` = col_double()
 
-df.race <- data.frame(read_csv("COVID-19_Vaccinations_by_Race_Current_County_Health.csv"))
-df.race <- subset(df.race,select=c(County.Name,Partially.Covered.African.American,
-                                   Partially.Covered.Native.American,
-                                   Fully.Covered.African.American,
-                                   Fully.Covered.Native.American))
+df.race <- data.frame(read_csv(sprintf("%s/COVID-19_Vaccinations_by_Race_Current_County_Health.csv",working_date)))
+df.race <- subset(df.race,select=c(county,partially_covered_african_american,
+                                   partially_covered_native_american,
+                                   partially_covered_asian,
+                                   partially_covered_pacific_islander,
+                                   partially_covered_white,
+                                   fully_covered_african_american,
+                                   fully_covered_native_american,
+                                   fully_covered_asian,
+                                   fully_covered_pacific_islander,
+                                   fully_covered_white
+                                   ))
 df.race[is.na(df.race)] <- 0
-df.all <-inner_join(df.all, df.race, by = c("county" = "County.Name"))
-df.all$Rate.BlackPartial.Per.100K <-df.all$Partially.Covered.African.American/df.all$TOT_BAC *100000
-df.all$Rate.BlackFull.Per.100K <-df.all$Fully.Covered.African.American/df.all$TOT_BAC *100000
-df.all$Rate.NAPartial.Per.100K <-df.all$Partially.Covered.Native.American/df.all$TOT_IAC *100000
-df.all$Rate.NAFull.Per.100K <-df.all$Fully.Covered.Native.American/df.all$TOT_IAC *100000
+df.all <-inner_join(df.all, df.race, by = c("county"))
+df.all$Rate.BlackPartial.Per.100K <-df.all$partially_covered_african_american/df.all$TOT_BAC *100000
+df.all$Rate.BlackFull.Per.100K <-df.all$fully_covered_african_american/df.all$TOT_BAC *100000
+df.all$Rate.NAPartial.Per.100K <-df.all$partially_covered_native_american/df.all$TOT_IAC *100000
+df.all$Rate.NAFull.Per.100K <-df.all$fully_covered_native_american/df.all$TOT_IAC *100000
+df.all$Rate.AsianPartial.Per.100K <-df.all$partially_covered_asian/df.all$TOT_NHAAC *100000
+df.all$Rate.AsianFull.Per.100K <-df.all$fully_covered_asian/df.all$TOT_NHAAC *100000
+df.all$Rate.PIPartial.Per.100K <-df.all$partially_covered_pacific_islander/df.all$TOT_NHNAC *100000
+df.all$Rate.PIFull.Per.100K <-df.all$fully_covered_pacific_islander/df.all$TOT_NHNAC *100000
+df.all$Rate.WhitePartial.Per.100K <-df.all$partially_covered_white/df.all$TOT_NHWA *100000
+df.all$Rate.WhiteFull.Per.100K <-df.all$fully_covered_white/df.all$TOT_NHWA *100000
 
-df.all$Compare.Partial.O65 <- df.all$Rate.O65Partial.Per.100K >= df.all$Rate.Partially.Covered.per.100.000
-df.all$Compare.Full.O65 <- df.all$Rate.O65Full.Per.100K >= df.all$Rate.Fully.Covered.per.100.000
-df.all$Compare.Partial.U65 <- df.all$Rate.U65Partial.Per.100K >= df.all$Rate.Partially.Covered.per.100.000
-df.all$Compare.Full.U65 <- df.all$Rate.U65Full.Per.100K >= df.all$Rate.Fully.Covered.per.100.000
-df.all$Compare.Partial.Hispanic <-df.all$Rate.HispanicPartial.Per.100K >= df.all$Rate.Partially.Covered.per.100.000
-df.all$Compare.Full.Hispanic <- df.all$Rate.HispanicFull.Per.100K >= df.all$Rate.Fully.Covered.per.100.000
-df.all$Compare.Partial.Black <-df.all$Rate.BlackPartial.Per.100K >= df.all$Rate.Partially.Covered.per.100.000
-df.all$Compare.Full.Black <- df.all$Rate.BlackFull.Per.100K >= df.all$Rate.Fully.Covered.per.100.000
-df.all$Compare.Partial.NA <-df.all$Rate.NAPartial.Per.100K >= df.all$Rate.Partially.Covered.per.100.000
-df.all$Compare.Full.NA <- df.all$Rate.NAFull.Per.100K >= df.all$Rate.Fully.Covered.per.100.000
+df.all$Compare.Partial.O65 <- df.all$Rate.O65Partial.Per.100K >= df.all$ratepartiallycovered
+df.all$Compare.Full.O65 <- df.all$Rate.O65Full.Per.100K >= df.all$ratefullycovered
+df.all$Compare.Partial.U65 <- df.all$Rate.U65Partial.Per.100K >= df.all$ratepartiallycovered
+df.all$Compare.Full.U65 <- df.all$Rate.U65Full.Per.100K >= df.all$ratefullycovered
+df.all$Compare.Partial.Hispanic <-df.all$Rate.HispanicPartial.Per.100K >= df.all$ratepartiallycovered
+df.all$Compare.Full.Hispanic <- df.all$Rate.HispanicFull.Per.100K >= df.all$ratefullycovered
+df.all$Compare.Partial.Black <-df.all$Rate.BlackPartial.Per.100K >= df.all$ratepartiallycovered
+df.all$Compare.Full.Black <- df.all$Rate.BlackFull.Per.100K >= df.all$ratefullycovered
+df.all$Compare.Partial.NA <-df.all$Rate.NAPartial.Per.100K >= df.all$ratepartiallycovered
+df.all$Compare.Full.NA <- df.all$Rate.NAFull.Per.100K >= df.all$ratefullycovered
+df.all$Compare.Partial.PA <-df.all$Rate.PIPartial.Per.100K >= df.all$ratepartiallycovered
+df.all$Compare.Full.PA <- df.all$Rate.PIFull.Per.100K >= df.all$ratefullycovered
+df.all$Compare.Partial.Asian <-df.all$Rate.AsianPartial.Per.100K >= df.all$ratepartiallycovered
+df.all$Compare.Full.Asian <- df.all$Rate.AsianFull.Per.100K >= df.all$ratefullycovered
+df.all$Compare.Partial.White <-df.all$Rate.WhitePartial.Per.100K >= df.all$ratepartiallycovered
+df.all$Compare.Full.White <- df.all$Rate.WhiteFull.Per.100K >= df.all$ratefullycovered
 
 remove(df.age,df.age.agg,df.census,df.denom,df.eth,df.race,df.race_ethnicity,df.u65,df.u65.agg,keeps)
 
-df.all<-subset(df.all,select=-c(County.Name))
+#df.all<-subset(df.all,select=-c(County.Name))
 # dump full set for review in Excel
-write_csv(df.all,sprintf("%s_vaccinaton_excel.csv",today),quote=FALSE)
+write_csv(df.all,sprintf("output/%s_vaccinaton_excel.csv",working_date),quote=FALSE)
 # remove what we don't want in qgis
-df.all<-subset(df.all,select=-c(County.Population,Partially.Covered,Fully.Covered,TOT_POP,TOT_BAC,TOT_IAC,TOT_H,TOT_O65,TOT_U65,
-                                U65Partial,U65Full,Partially.Covered.Hispanic,Fully.Covered.Hispanic,Partially.Covered.African.American,
-                                Partially.Covered.Native.American,Fully.Covered.African.American,Fully.Covered.Native.American,
+df.all<-subset(df.all,select=-c(county_population,TOT_POP,TOT_BAC,TOT_IAC,TOT_H,
+                                TOT_NHWA,TOT_NHAAC,TOT_NHNAC,TOT_O65,TOT_U65,
+                                U65Partial,U65Full,partially_covered_hispanic,fully_covered_hispanic,partially_covered_african_american,
+                                partially_covered_native_american,fully_covered_african_american,fully_covered_native_american,
+                                partially_covered_pacific_islander,fully_covered_pacific_islander,partially_covered_asian,fully_covered_asian,
+                                partially_covered_white,fully_covered_white,
                                 O65Partial,O65Full))
-write_csv(df.all,sprintf("%s_vaccinaton_qgis.csv",today),quote=FALSE)
-system(sprintf("mv COVID-19_Vaccinations*.csv %s",today))
+write_csv(df.all,sprintf("output/%s_vaccinaton_qgis.csv",working_date),quote=FALSE)
+
