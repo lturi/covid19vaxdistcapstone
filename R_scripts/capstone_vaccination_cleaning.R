@@ -71,8 +71,8 @@ df.denom <- inner_join(df.race_ethnicity,df.age.agg, by = c("CTYNAME" = "county"
 df.denom <- inner_join(df.denom,df.u65.agg, by = c("CTYNAME" = "county"))
 
 
-colnames(df.denom)<- c("county","TOT_POP","TOT_BAC","TOT_IAC","TOT_NHWA",
-                       "TOT_NHAAC","TOT_NHNAC","TOT_H","TOT_O65","TOT_U65")
+colnames(df.denom)<- c("county","TOT_POP","TOT_BAC","TOT_IAC","TOT_H","TOT_NHWA",
+                       "TOT_NHAAC","TOT_NHNAC","TOT_O65","TOT_U65")
 
 
 
@@ -157,7 +157,7 @@ df.all$Rate.PIPartial.Per.100K <-df.all$partially_covered_pacific_islander/df.al
 df.all$Rate.PIFull.Per.100K <-df.all$fully_covered_pacific_islander/df.all$TOT_NHNAC *100000
 df.all$Rate.WhitePartial.Per.100K <-df.all$partially_covered_white/df.all$TOT_NHWA *100000
 df.all$Rate.WhiteFull.Per.100K <-df.all$fully_covered_white/df.all$TOT_NHWA *100000
-
+df.all[is.na(df.all)] <- 0
 df.all$Compare.Partial.O65 <- df.all$Rate.O65Partial.Per.100K >= df.all$ratepartiallycovered
 df.all$Compare.Full.O65 <- df.all$Rate.O65Full.Per.100K >= df.all$ratefullycovered
 df.all$Compare.Partial.U65 <- df.all$Rate.U65Partial.Per.100K >= df.all$ratepartiallycovered
