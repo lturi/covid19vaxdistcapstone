@@ -8,7 +8,7 @@
 
 library(readr)
 
-working_date <- "20210408"
+working_date <- "20210504"
 
 data <- read_csv(sprintf("output/%s_results.csv",working_date))
 #cols(
@@ -32,8 +32,9 @@ data <- read_csv(sprintf("output/%s_results.csv",working_date))
 #)
 
 county_state1 <- t(data.frame(strsplit(data$Name,",")))
+#data$arcgis_county <- sprintf("%s County, %s", trim(county_state1[,2]),trim(county_state1[,1]))
 data$STNAME <-str_to_upper(county_state1[,1],locale="en")
-data$COUNTY_NAM <-str_to_upper(county_state1[,2],locale="en")
+data$COUNTY_NAM <-trim(str_to_upper(county_state1[,2],locale="en"))
 
 data <- data[data$STNAME=="PENNSYLVANIA",]
 data <- subset(data,select=-c(3,Name,Source,STNAME))
@@ -45,7 +46,7 @@ colnames(data) <- c("Toxpi Score","HCluster",df[,1],"COUNTY_NAM")
 
 ## add image names
 images<-paste(1:67)
-image_names<-data.frame(c(1:67),paste(sprintf("/images/%s_images_",working_date), images, ".svg",sep=""))
+image_names<-data.frame(c(1:67),paste(sprintf("/images/%s_images_",working_date), images, ".png",sep=""))
 colnames(image_names)<-c("row","pvi_image_path")
 image_names<-data.frame(image_names)
 data<-data.frame(data)

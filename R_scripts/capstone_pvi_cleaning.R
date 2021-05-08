@@ -24,8 +24,8 @@ library(plyr)
 
 # set variables before running
 
-working_date <- "20210408"
-pvi_model_home <- "~/capstone/pvi/data/Model11.2.1"
+working_date <- "20210504"
+pvi_model_home <- "C:\\Users\\fiddl\\Documents\\GitHub\\pvi\\data\\Model11.2.1"
 today<-format(Sys.time(),"%C%y%m%d")
 
 # pull just the data from PA from the PVI data repository from the CDC
@@ -89,12 +89,12 @@ hispanic<-hispanic[,c("STNAME","CTYNAME","H_MALE","H_FEMALE","TOT_POP")]
 hispanic$H <- H_FEMALE+H_MALE
 hispanic$percentHispanic <- hispanic$H / hispanic$TOT_POP
 attach(hispanic)
-hispanic$CTYNAME <- trim(str_to_upper(CTYNAME,locale="en"))
-hispanic$CTYNAME<-sub('[" "][^.]+$', '', CTYNAME)
+hispanic$CTYNAME<-trim(str_to_upper(sub('[" "][^.]+$', '', CTYNAME)))
 hispanic$STNAME<- trim(str_to_upper(STNAME,locale="en"))
 hispanic <- hispanic[,c("STNAME","CTYNAME","percentHispanic")]
 colnames(hispanic) <-c("state","county","PctHisp")
 m_data2$county<-trim(m_data2$county)
+m_data2$county<-str_to_upper(m_data2$county, locale="en")
 merged<-join(m_data2, hispanic,
      type = "inner", by=c("state","county"),match="all")
 
@@ -106,6 +106,6 @@ df <-df %>% tibble %>%
 df <-df %>% distinct(name, .keep_all = TRUE)
 
 write_csv(df,"capstone_model.csv")
-system(sprintf("cat toxpi_model_definition.txt capstone_model.csv > output/%s_data.csv",working_date) )
-system("rm capstone_model.csv")
-remove(census,county_state1,df,df.all,hispanic,m_data2,merged,pvi_model_home,today,working_date)
+system(sprintf("type toxpi_model_definition.txt capstone_model.csv > output\\%s_data.csv",working_date) )
+system("del capstone_model.csv")
+remove(census,county_state1,hispanic,df,m_data2,merged,pvi_model_home,today,working_date)

@@ -28,7 +28,7 @@ library(dplyr)
 
 ## make dir to place source files since they cannot be retrieved again
 today<-format(Sys.time(),"%C%y%m%d")
-working_date <- "20210415"
+working_date <- "20210504"
 #system(sprintf("mkdir %s", today))
 
 ## get denominators for race/ethnicity/age over 65 to match PVI indicators
@@ -77,7 +77,7 @@ colnames(df.denom)<- c("county","TOT_POP","TOT_BAC","TOT_IAC","TOT_H","TOT_NHWA"
 
 
 ## get total counts vaccine data
-df.all<-data.frame(read_csv(sprintf("%s/COVID-19_Vaccinations_by_Residence_Current_County_Health.csv",working_date)))
+df.all<-data.frame(read_csv(sprintf("%s/gcnb-epac.csv",working_date)))
 df.all$county <- str_to_upper(df.all$county)
 df.all <- df.all[order(df.all$county),]
 df.all<-join(df.all,df.denom,
@@ -92,7 +92,7 @@ df.all<-join(df.all,df.denom,
 ## step would be to pull denominator data for each corresponding age group, and
 ## look at those metrics.
 
-df.age <- data.frame(read_csv(sprintf("%s/COVID-19_Vaccinations_by_Age_Group_Current_County_Health.csv",working_date)))
+df.age <- data.frame(read_csv(sprintf("%s/niuh-2xe3.csv",working_date)))
 df.age[is.na(df.age)] <- 0
 df.age <- data.frame( df.age$county, U65Partial = apply(df.age[2:11], 1, sum) ,
                       O65Partial = apply(df.age[12:20], 1, sum),
@@ -109,7 +109,7 @@ df.all$Rate.U65Full.Per.100K <-df.all$U65Full/df.all$TOT_U65 *100000
 
 ## add in vaccination rates for ethnicity (hispanic)
 
-df.eth <- data.frame(read_csv(sprintf("%s/COVID-19_Vaccinations_by_Ethnicity_Current_County_Health.csv",working_date)))
+df.eth <- data.frame(read_csv(sprintf("%s/7ruj-m7k6.csv",working_date)))
 df.eth[is.na(df.eth)] <- 0
 df.eth <- subset(df.eth,select=c(zip_county_desc,partially_covered_hispanic,fully_covered_hispanic))
 df.all <-inner_join(df.all, df.eth, by = c("county" = "zip_county_desc"))
@@ -133,7 +133,7 @@ df.all$Rate.HispanicFull.Per.100K <-df.all$fully_covered_hispanic/df.all$TOT_H *
 #`Fully Covered White` = col_double(),
 #`Fully Covered Unknown` = col_double()
 
-df.race <- data.frame(read_csv(sprintf("%s/COVID-19_Vaccinations_by_Race_Current_County_Health.csv",working_date)))
+df.race <- data.frame(read_csv(sprintf("%s/x5z9-57ub.csv",working_date)))
 df.race <- subset(df.race,select=c(county,partially_covered_african_american,
                                    partially_covered_native_american,
                                    partially_covered_asian,
