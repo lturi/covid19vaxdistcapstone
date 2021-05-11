@@ -1,19 +1,20 @@
 # covid19vaxdistcapstone
 
-This is the QGIS project repository and script repository for M. Eng Health Systems Engineering project COVID-19 Vaccine Distribution in PA by Leigh Friedman, Neha Mandhyani, and Liz Turi
+This is the data cleaning repository for M. Eng Health Systems Engineering project Visualizing Equity in COVID-19 Vaccine Distribution by Leigh Friedman, Neha Mandhyani, and Liz Turi
 
 # Project folders
 
 * data/ -- this is all of the raw data collected for the project, and script output, files in here are static files (census for all US, census for just PA, and toxpi model definition headers)
 * data/[dated directories] - raw data pulled from data.pa.gov
-* data/output -- data prepared for qgis import
-* data/output/[dated directories] -- toxpi images
+* data/output -- data prepared for ArcGIS import
+* data/output/[dated directories] -- toxpi images charts from R
 * R_scripts/ -- data cleansing scripts 
 
 # Tools used
 
-* QGIS - for GIS modeling - https://qgis.org/en/site/forusers/download.html
+* -QGIS - for GIS modeling - https://qgis.org/en/site/forusers/download.html-
 * Toxpi - to generate a variant on the Pandemic Vulnerability Index http://toxpi.org/
+* ArcGIS 
 
 # Pandemic Vulnterability Index
 
