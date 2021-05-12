@@ -2,11 +2,11 @@
 # This script aggregates dose allocations by county
 #
 # First dose allocation to providers
-#https://data.pa.gov/resource/qsii-pka7.csv?$$app_token={app_token}&$limit=10000
+#https://data.pa.gov/resource/qsii-pka7.csv?$$app_token=qa1N9SkGBctVtGWff6TTuCpiP&$limit=20000
 # Second dose allocation to providers
-# https://data.pa.gov/resource/8jae-5d8i.csv?$$app_token={app_token}&$limit=8000
+# https://data.pa.gov/resource/8jae-5d8i.csv?$$app_token=qa1N9SkGBctVtGWff6TTuCpiP&$limit=8000
 # Doses allocated via federal program
-# https://data.pa.gov/resource/vxbs-jbjq.csv?$$app_token={app_token}&$limit=8000
+# https://data.pa.gov/resource/vxbs-jbjq.csv?$$app_token=qa1N9SkGBctVtGWff6TTuCpiP&$limit=8000
 #
 ## This script assumes all files noted above are available in the working directory, and are ready for cleaning into a single file
 ## that can be brought into QGIS

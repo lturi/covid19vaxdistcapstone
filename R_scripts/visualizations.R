@@ -34,34 +34,34 @@ legend("topleft", inset=0.03,
        lty=1:2, cex=0.8,
        box.lty=2, box.lwd=2, box.col="black")
 
-points (adm_white ~EXP_WHITE, data=df,
+points (rate_white ~exp_rate_white, data=df,
      pch = 16, cex = 1.3, col = "blue", xlab="Expected Rate (per 100K)",
      ylab="Rate Administered (per 100K)",
      ylim=c(0,100000), xlim=c(0,100000))
-abline(lm(adm_white ~ EXP_WHITE),col="blue")
+abline(lm(rate_white ~ exp_rate_white),col="blue")
 #dev.copy(png,sprintf('../images/actualvsexpected_all_%s.png',working_date))
-points(adm_black ~EXP_BLACK, data=df, xlab="Expected Rate (per 100K)",
+points(rate_black ~exp_rate_black, data=df, xlab="Expected Rate (per 100K)",
        ylab="Rate Administered (per 100K)",
        ylim=c(0,100000), xlim=c(0,100000),
        pch = 16, cex = 1.3, col = "red")
-abline(lm(adm_black ~EXP_BLACK),col="red")
+abline(lm(rate_black ~exp_rate_black),col="red")
 
-points(adm_na ~EXP_NA, data=df, xlab="Expected Rate (per 100K)",
+points(rate_na ~exp_rate_na, data=df, xlab="Expected Rate (per 100K)",
      ylab="Rate Administered (per 100K)",
      ylim=c(0,100000), xlim=c(0,100000),
      pch = 16, cex = 1.3, col = "orange")
-abline(lm(adm_na ~ EXP_NA),col="orange")
+abline(lm(rate_na ~ exp_rate_na),col="orange")
 
-points(adm_asian ~EXP_ASIAN, data=df, xlab="Expected Rate (per 100K)",
+points(rate_asian ~exp_rate_asian, data=df, xlab="Expected Rate (per 100K)",
        ylab="Rate Administered (per 100K)",
        ylim=c(0,100000), xlim=c(0,100000),
        pch = 16, cex = 1.3, col = "green")
-abline(lm(adm_asian ~EXP_ASIAN),col="green")
-points(adm_pi ~EXP_PI, data=df, xlab="Expected Rate (per 100K)",
+abline(lm(rate_asian ~exp_rate_asian),col="green")
+points(rate_pi ~exp_rate_pi, data=df, xlab="Expected Rate (per 100K)",
        ylab="Rate Administered (per 100K)",
        ylim=c(0,100000), xlim=c(0,100000),
        pch = 16, cex = 1.3, col = "purple")
-abline(lm(adm_pi ~ EXP_PI), col="purple")
+abline(lm(rate_pi ~ exp_rate_pi), col="purple")
 #dev.copy(png,sprintf('../images/actualvsexpected_all_%s.png',working_date))
 
 
@@ -83,17 +83,17 @@ legend("topleft", inset=0.03,
        lty=1:2, cex=0.8,
        box.lty=2, box.lwd=2, box.col="black")
 
-points (adm_hisp ~EXP_HISP, data=df,
+points (rate_hisp ~exp_rate_hisp, data=df,
         pch = 16, cex = 1.3, col = "blue", xlab="Expected Rate (per 100K)",
         ylab="Rate Administered (per 100K)",
         ylim=c(0,100000), xlim=c(0,100000))
-abline(lm(adm_hisp ~ EXP_HISP),col="blue")
+abline(lm(rate_hisp ~ exp_rate_hisp),col="blue")
 #dev.copy(png,sprintf('../images/actualvsexpected_all_%s.png',working_date))
-points(adm_nhisp ~EXP_NHISP, data=df, xlab="Expected Rate (per 100K)",
+points(rate_nhisp ~exp_rate_nhisp, data=df, xlab="Expected Rate (per 100K)",
        ylab="Rate Administered (per 100K)",
        ylim=c(0,100000), xlim=c(0,100000),
        pch = 16, cex = 1.3, col = "red")
-abline(lm(adm_nhisp ~EXP_NHISP),col="red")
+abline(lm(rate_nhisp ~exp_rate_nhisp),col="red")
 dev.copy(png,sprintf('../images/actualvsexpected_ethnicity_all_%s.png',working_date))
 dev.off()
 
