@@ -5,7 +5,7 @@ library(readr)
 library(gdata)
 library(plyr)
 library(dplyr)
-
+dev.off()
 today<-format(Sys.time(),"%C%y%m%d")
 working_date <- "20210504"
 #system(sprintf("mkdir %s", today))
