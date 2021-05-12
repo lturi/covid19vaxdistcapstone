@@ -67,7 +67,7 @@ df.census$PCT_PI<-df.census$NAC_TOTAL/df.census$TOT_POP
 df.census$PCT_HISP<-df.census$H_TOTAL/df.census$TOT_POP
 df.census$PCT_NHISP<-df.census$NH_TOTAL/df.census$TOT_POP
 df.census_keep<-df.census[,c("CTYNAME","PCT_WHITE","PCT_BLACK","PCT_ASIAN","PCT_NA","PCT_PI","PCT_HISP","PCT_NHISP",
-                             "BAC_TOTAL","WA_TOTAL","IAC_TOTAL","AAC_TOTAL","NAC_TOTAL","H_TOTAL","NH_TOTAL")]
+                             "BAC_TOTAL","WA_TOTAL","IAC_TOTAL","AAC_TOTAL","NAC_TOTAL","H_TOTAL","NH_TOTAL","TOT_POP")]
 remove(df.census)
 
 
@@ -135,6 +135,7 @@ df.race_all<-subset(df.race,select=c("county","adm_white","adm_black","adm_na","
 df.alloc <-inner_join(df.alloc, df.race_all, by = c("county"))
 remove(df.race,df.race_all,df.adm)
 
+df.alloc$rate_total_adm <- df.alloc$total_adm/df.alloc$TOT_POP * 100000
 df.alloc$rate_white<- df.alloc$adm_white/df.alloc$WA_TOTAL * 100000
 df.alloc$rate_black<- df.alloc$adm_black/df.alloc$BAC_TOTAL * 100000
 df.alloc$rate_na<- df.alloc$adm_na/df.alloc$IAC_TOTAL * 100000
@@ -142,6 +143,15 @@ df.alloc$rate_asian<- df.alloc$adm_asian/df.alloc$AAC_TOTAL * 100000
 df.alloc$rate_pi<- df.alloc$adm_pi/df.alloc$NAC_TOTAL * 100000
 df.alloc$rate_hisp<- df.alloc$adm_hisp/df.alloc$H_TOTAL * 100000
 df.alloc$rate_nhisp<- df.alloc$adm_nhisp/df.alloc$NH_TOTAL * 100000
+
+df.alloc$rate_total_exp <- df.alloc$total/df.alloc$TOT_POP * 100000
+df.alloc$exp_rate_white<- df.alloc$EXP_WHITE/df.alloc$WA_TOTAL * 100000
+df.alloc$exp_rate_black<- df.alloc$EXP_BLACK/df.alloc$BAC_TOTAL * 100000
+df.alloc$exp_rate_na<- df.alloc$EXP_NA/df.alloc$IAC_TOTAL * 100000
+df.alloc$exp_rate_asian<- df.alloc$EXP_ASIAN/df.alloc$AAC_TOTAL * 100000
+df.alloc$exp_rate_pi<- df.alloc$EXP_PI/df.alloc$NAC_TOTAL * 100000
+df.alloc$exp_rate_hisp<- df.alloc$EXP_HISP/df.alloc$H_TOTAL * 100000
+df.alloc$exp_rate_nhisp<- df.alloc$EXP_NHISP/df.alloc$NH_TOTAL * 100000
 
 attach(df.alloc)
 ## only a percentage of total allocated were actually administered, which affects expected rates
